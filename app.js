@@ -1,18 +1,16 @@
-const {readFile}=require('fs')
+var http=require('http')
+var fs=require('fs')
 
-const getText=(path)=>{
- return new Promise((resolve,reject)=>{
-  readFile(path,'utf8',(err,data)=>{
-     if (err){
-       reject(err)
-     } else{
-       resolve(data);
-     }
+http
+  .createServer(function (req, res) {
+    // const text = fs.readFileSync("./content/big.txt", "utf8");
+    // res.end(text);
+    const fileStream=fs.createReadStream('./content/big.txt','utf8')
+    fileStream.on('open',()=>{
+     fileStream.pipe(res)
+    })
+    fileStream.on('error',(err)=>{
+     res.end(err)
+    })
   })
-
- })
-}
-
-getText("./content/first.txt")
-  .then((result) => console.log(result))
-  .catch((err) => console.log(err));
+  .listen(5000);
